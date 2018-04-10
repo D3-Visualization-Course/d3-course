@@ -5,8 +5,9 @@
 </head>
 
 <body>
-    <svg id="container" height="300" width="500">
+    <svg id="container" height="300" width="500" , style="border: solid 1px #000">
         <g id="body" style="transform:translate(100px,0px)"></g>
+        <g id="yAxis"></g>
         <g id="xAxis"></g>
 
     </svg>
@@ -34,16 +35,26 @@
             .style("height", scalePosition.bandwidth())
             .style("y", d => scalePosition(d.Name))
 
-        let xAxis = d3
-            .select("#xAxis")
+        let xAxis = d3.axisBottom(scale)
+            .ticks(4)
+            .tickFormat(d => d + " lb")
+        //.tickFormat(d3.format("$.2f"))
+
+        d3.select("#xAxis")
             .style("transform", "translate(100px, 200px)")
-            .call(d3.axisBottom(scale))
+            .call(xAxis)
 
-        d3.select("#container")
-            .append("g")
+        let yAxis = d3.axisLeft(scalePosition)
+        yAxisContainer = d3.select("#yAxis")
             .style("transform", "translate(100px, 0px)")
-            .call(d3.axisLeft(scalePosition))
+            .call(yAxis)
 
+        yAxisContainer.append("text")
+            .text("Name")
+            .attr("fill", "black")
+            .attr("dy", 100)
+            .attr("dx", -50)
+            .attr("transform", "rotate(-90, -50, 100)")
 
 
     }

@@ -1,0 +1,69 @@
+<html>
+
+<head>
+    <style>
+        .line {
+            fill: none;
+            stroke: blue
+        }
+    </style>
+</head>
+
+<body>
+    <svg id="container" height="300" width="500">
+        <g id="body" transform="translate(150,150)"></g>
+        <g id="xAxis"></g>
+        <g id="yAxis"></g>
+    </svg>
+</body>
+<script src="d3.js"></script>
+<script>
+    let body = d3.select("#body")
+    d3.csv("data.csv").then(showData)
+
+    function showData(data) {
+        let bodyHeight = 200
+        let bodyWidth = 400
+
+        data = data.map(d => ({
+            country: d.country,
+            sales: +d.sales
+        }))
+        let contries = data.map(d => d.country);
+        colorScale = d3.scaleOrdinal()
+            .range(d3.schemeCategory10)
+            .domain(contries)
+
+        let pie = d3.pie()
+            .value(d => d.sales);
+        console.log(pie(data))
+        // set the ranges
+
+        var arc = d3.arc()
+            .outerRadius(bodyHeight / 2)
+            .innerRadius(bodyHeight / 2 - 20);
+
+
+        var g = body.selectAll(".arc")
+            .data(pie(data))
+            .enter().append("g");
+
+        g.append("path")
+            .attr("d", arc)
+            .style("fill", d => colorScale(d.data.country));
+
+        g.append("text")
+            .attr("transform", (d) => {
+                let _d = arc.centroid(d).map(v => v * 1.4);
+                return "translate(" + _d + ")";
+            })
+            .style("text-anchor", "middle")
+            .text(d => d.data.country);
+
+
+    }
+
+
+</script>
+
+</html>

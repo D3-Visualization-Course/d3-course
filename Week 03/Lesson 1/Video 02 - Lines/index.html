@@ -1,0 +1,74 @@
+<html>
+
+<head>
+    <style>
+        .line {
+            fill: none;
+            stroke: blue
+        }
+    </style>
+</head>
+
+<body>
+    <svg id="container" height="300" width="500">
+        <g id="body" transform="translate(50,50)"></g>
+        <g id="xAxis"></g>
+        <g id="yAxis"></g>
+    </svg>
+</body>
+<script src="d3.js"></script>
+<script>
+    let body = d3.select("#body")
+    d3.csv("data.csv").then(showData)
+
+    function showData(data) {
+        let bodyHeight = 200
+        let bodyWidth = 400
+
+        data = data.map(d => ({
+            date: new Date(d.date),
+            price: +d.price
+        }))
+
+        // set the ranges
+        let maxValue = d3.max(data, d => d.price)
+        let dateRange = d3.extent(data, d => d.date)
+
+        let yScale = d3.scaleLinear()
+            .range([bodyHeight, 0])
+            .domain([0, maxValue]);
+
+        let xScale = d3.scaleTime()
+            .range([0, bodyWidth])
+            .domain(dateRange);
+
+        let valueline = d3.line()
+            .x((d) => xScale(d.date))
+            .y((d) => yScale(d.price))
+            .defined(d => d.price);
+
+        //Add the X Axis
+        let xAxis = d3.axisBottom(xScale)
+            .tickFormat(d3.timeFormat("%b"))
+        body.append("g")
+            .attr("transform", "translate(0," + bodyHeight + ")")
+            .call(xAxis);
+
+        body.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("d", valueline);
+
+
+
+        // Add the Y Axis
+        body.append("g")
+            .call(d3.axisLeft(yScale));
+
+
+    }
+
+
+</script>
+
+</html>
