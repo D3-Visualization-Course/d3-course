@@ -1,0 +1,35 @@
+<html>
+
+<head></head>
+
+<body>
+    <p class="main-paragraph">This is an example</p>
+    <p>And this is the second paragraph</p>
+    <button onclick="change1()">Change First Paragraph</button>
+    <button onclick="change2()">Change all paragraphs</button>
+    <button onclick="change3()">Change with HTML</button>
+    <button onclick="change4()">Change with text</button>
+</body>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+    function change1() {
+        let selection = d3.select("p");
+        selection.text("This is the first text")
+    }
+
+    function change2() {
+        let selection = d3.selectAll("p");
+        selection.text("This is a new text")
+    }
+
+    function change3() {
+        let selection = d3.select("p");
+        selection.html('This <b style="color:red">is a new </b> text')
+    }
+    function change4() {
+        let selection = d3.select("p");
+        selection.text('This <b style="color:red">is a new </b> text')
+    }
+</script>
+
+</html>

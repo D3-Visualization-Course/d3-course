@@ -1,0 +1,27 @@
+h1 {
+    color: red;
+}
+
+#window {
+    width: 300px;
+    border: solid 1px black;
+    margin: 20px;
+    padding: 20px;
+}
+
+.highlight {
+    background-color: #ccc;
+}
+
+button:hover {
+    background-color: black;  
+    box-shadow: 0px 0px 20px #ccc;
+    font-size: 20px;
+}
+
+button {
+    background-color: #CC2222;
+    border: none;
+    color: white;
+    transition: all 2s;
+}

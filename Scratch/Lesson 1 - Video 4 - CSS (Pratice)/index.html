@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My CSS experiment</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+<style>
+    body {
+        margin: 0px;
+    }
+
+    h1 {
+        color: red;
+        margin: 0px;
+    }
+
+    p {
+        color: blue;
+    }
+
+    .main-paragraph {
+        font-weight: bold;
+        text-decoration: underline;
+        margin-left: 20px;
+    }
+
+    #logo {
+        width: 200px;
+    }
+
+    #page-header {
+        border-bottom: solid 1px black;
+    }
+
+    h1:hover {
+        background-color: black;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <div id="page-header">
+        <img id="logo" src="./logo.png" />
+        <h1>Hello World!</h1>
+    </div>
+    <p class="main-paragraph">This is my first CSS example</p>
+    <p>And this is the second paragraph</p>
+</body>
+<script>
+    d3.select("p").text("this is the content")
+    d3.select(".main-paragraph").html("this <b>is</b> the <i>content</i>")
+</script>
+
+</html>

@@ -1,0 +1,32 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+<script src="d3.js"></script>
+<script>
+    let container = d3.select("#container")
+    d3.csv("data.csv").then(showData)
+
+    function write(text) {
+        container.append("div").text(text)
+    }
+
+    function showData(clients) {
+        clients.sort((a, b) => d3.ascending(a.Name, b.Name))
+        clients = clients.filter(c => c.Weight < 190)
+        for (let i = 0; i < clients.length; i++) {
+            write(clients[i].Name + ", " + clients[i].Weight)
+        }
+    }
+
+    write("Start")
+
+
+</script>
+
+</html>

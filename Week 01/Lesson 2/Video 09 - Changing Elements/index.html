@@ -1,0 +1,41 @@
+<html>
+
+<head>
+    <style>
+        button {
+            display: block;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+
+        <img id="animalImg" src="dog.jpeg" width="200px" />
+    </div>
+
+    <div id="text" style="font-size:40px">This is an animal.</div>
+
+    <div>
+        <button onclick="change('cat.jpeg')">Show Cat</button>
+        <button onclick="change('dog.jpeg')">Show Dog</button>
+        <button onclick="changeColor()">Change Color</button>
+        <button onclick="change4()">Increase Font</button>
+        <button onclick="change4()">Decrease Font</button>
+    </div>
+</body>
+<script src="d3.js"></script>
+<script>
+    let scale = d3.scaleOrdinal()
+        .domain(["John", "Jane", "Mike"])
+        .range([0, 300, 200])
+
+    console.log(scale("John"))
+    console.log(scale("Jane"))
+    console.log(scale("Mike"))
+
+
+</script>
+
+</html>
