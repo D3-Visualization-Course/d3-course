@@ -1,0 +1,148 @@
+<html>
+    <head>
+        <title>Earthquakes around the world</title>
+        <script src="d3.js"></script>
+        <style>
+            body {
+                text-align: center;
+            }
+            svg {
+                border: solid 1px #000;
+            }
+            .graticule {
+                fill: none;
+                stroke: #777;
+                stroke-width: 1px;
+                stroke-opacity: .5;
+            }
+
+            #sphere {
+                fill: none;
+                stroke-width: 2px;
+                stroke: black;
+            }
+
+        </style>
+    </head>
+    <body>
+        <svg id="map">
+
+        </svg>
+    </body>
+    <script>
+        const WIDTH = 800
+        const HEIGHT = 400
+
+        function drawBaseMap(mapData, earthquakes, containerID) {
+            let maximumMagnitude = d3.max(mapData.features, d => d.properties.value);
+            let meanMagnitude = d3.mean(mapData.features, d => d.properties.value);
+            let minMagnitude = d3.min(mapData.features, d => d.properties.value);
+            let colorScale = d3.scaleLinear()
+                .range(["#5e3c99", "#ffffbf" ,"#e66101"])
+                .domain([minMagnitude, meanMagnitude, maximumMagnitude])
+
+            let container = d3.select(containerID)
+
+            //TODO - Video 2 - Create Projection
+
+            let projection = d3.geoNaturalEarth1()
+                .fitSize([WIDTH, HEIGHT], mapData)
+                .translate([WIDTH/2,HEIGHT/2])
+                .rotate([150,0])
+
+            //TODO - Video 1 - Create geoPath 
+
+            let path = d3.geoPath()
+                .projection(projection);
+
+            //TODO - Video 2 - Draw Sphere - Border Around the map
+
+            container.append("path")
+                .datum({type : "Sphere"})
+                .attr("fill", " #ffffff")
+                .attr("stroke", "black")
+                .attr("stroke-width", 1.2)
+                .attr("d", path)
+
+            //TODO - Video 2 - Draw Graticule
+
+            let graticule = d3.geoGraticule()
+            container.append("g")
+                .append("path")
+                .datum(graticule)
+                .attr("d", path)
+                .attr("class",  "graticule")
+            container
+                .append("g")
+                //.attr("transform", `scale(2,-2) translate(${WIDTH/4}, ${HEIGHT/2})`)
+                .selectAll("path")
+                .data(mapData.features)
+                .enter()
+                    .append("path")
+                        .attr("fill", d => colorScale(d.properties.value))
+                        .attr("d", path)
+                        .attr("stroke-width", 0.7)
+                        .append("title")
+                            .text(d => d.properties.name)
+
+            plotEarthquakes(earthquakes, projection, container)
+        }
+
+        function plotEarthquakes(earthquakes, projection, container) {
+            //TODO - Video 4 - Add one dot for each earthquake (data: earthquakes)
+            let positionedEarthquakes = earthquakes.map(d => {
+                let pixel_coordinates = projection([d.Longitude, d.Latitude])
+                d.x = pixel_coordinates[0]
+                d.y = pixel_coordinates[1]
+                return d;
+            })
+
+            container.append("g")
+                .selectAll("circle")
+                .data(positionedEarthquakes)
+                .enter()
+                .append("circle")
+                    .attr("opacity", 0.3)
+                    .attr("fill", "green")
+                    .attr("r", 3)
+                    .attr("cx", d  => d.x)
+                    .attr("cy", d   => d.y)
+        }
+
+        //This function merges the map geoinformation with the largest earthquake data, not that some contries don't have earthquake data, and it is fine.
+        function mergeInfoIntoMapData(mapData, data) {
+            console.log(mapData.features.length - data.length)
+            count = 0
+            mapData.features = mapData.features.map(geoFeature => {
+                let dataInfo = data.find(d => d.Country === geoFeature.properties.name)
+                if(!dataInfo) {
+                    console.log("Didn't find", geoFeature.properties.name)
+                    return geoFeature
+                }
+                
+                geoFeature.properties.value = +dataInfo.Magnitude
+                return geoFeature
+            })
+            
+        }
+       
+        function loadData() {
+            d3.queue()
+                .defer(d3.json, "countries.geo.json")
+                .defer(d3.csv, "largestEarthquakes.csv")
+                .defer(d3.csv, "earthquakes.csv")
+                .await((err, mapData, lagestEarthquakes, earthquakes) => {
+                    mergeInfoIntoMapData(mapData, lagestEarthquakes)
+                    drawBaseMap(mapData, earthquakes, "#map")
+                })
+        }
+
+        function main() {
+            d3.select("#map")
+                .attr("width", WIDTH)
+                .attr("height", HEIGHT)
+            loadData()
+        }
+        main()
+    </script>
+</html>
