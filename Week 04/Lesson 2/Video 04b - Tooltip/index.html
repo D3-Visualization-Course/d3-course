@@ -31,13 +31,7 @@
     <svg id="barchart">
         <g class="body" />
     </svg>
-    <svg id="timeline">
-        <g class="xAxis" />
-        <g class="yAxis" />
-        <g class="body">
-            <path style="stroke: black" />
-        </g>
-    </svg>
+
     <div id="tooltip">Tooltip</div>
 </body>
 <script src="d3.js"></script>
@@ -58,24 +52,13 @@
 
     d3.csv("data.csv")
         .then((data) => {
-            data = prepareData(data)
+            data = data.map(d => {
+                d.GDP = +d.GDP
+                return d
+            })
             drawBarChart(data)
         })
 
-    function prepareData(data) {
-        return data.map(d => {
-            let years = Object.keys(d).filter(k => !isNaN(+d[k]))
-            d["history"] = []
-            for (let year of years) {
-                d["history"].push({
-                    year: year,
-                    value: +d[year]
-                })
-            }
-            d[2016] = +d[2016]
-            return d;
-        })
-    }
 
     function showTooltip(text, coords) {
         let x = coords[0];
@@ -86,40 +69,6 @@
             .style("top", y)
             .style("left", x)
             .text(text)
-    }
-
-    function drawLineChart(data) {
-        data = data.history;
-        let margin = { left: 40, bottom: 20, right: 20, top: 20 }
-
-        let bodyWidth = width - margin.left - margin.right;
-        let bodyHeight = height - margin.top - margin.bottom;
-
-        let xScale = d3.scaleLinear()
-            .range([0, bodyWidth])
-            .domain(d3.extent(data, d => d.year))
-
-        let yScale = d3.scaleLinear()
-            .range([bodyHeight, 0])
-            .domain([0, d3.max(data, d => d.value)])
-
-        let lineGenerator = d3.line()
-            .x(d => xScale(d.year))
-            .y(d => yScale(d.value))
-
-        timeline.select(".body")
-            .attr("transform", `translate(${margin.left},${margin.top})`)
-            .select("path").datum(data)
-            .attr("d", lineGenerator)
-
-        timeline.select(".xAxis")
-            .attr("transform", `translate(${margin.left},${height - margin.bottom})`)
-            .call(d3.axisBottom(xScale).ticks(5))
-
-        timeline.select(".yAxis")
-            .attr("transform", `translate(${margin.left},${margin.top})`)
-            .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => (d / 1e12) + "T"))
-
     }
 
     function drawBarChart(data) {
@@ -135,7 +84,7 @@
 
         let yScale = d3.scaleLinear()
             .range([bodyHeight, 0])
-            .domain([0, d3.max(data, d => d[2016])])
+            .domain([0, d3.max(data, d => d.GDP)])
 
         barChartBody = barchart.select(".body")
             .attr("transform", `translate(${margin.left},${margin.bottom})`)
@@ -144,10 +93,10 @@
 
         barChartBody.enter()
             .append("rect")
-
+            .attr("fill", d => d.Country === selectedCountry ? "red" : "#556677")
             .attr("width", xScale.bandwidth())
-            .attr("height", d => bodyHeight - yScale(d[2016]))
-            .attr("y", d => yScale(d[2016]))
+            .attr("height", d => bodyHeight - yScale(d.GDP))
+            .attr("y", d => yScale(d.GDP))
             .attr("x", d => xScale(d.Country))
             .on("mouseenter", (d) => {
                 showTooltip(d.Country, [d3.event.clientX, d3.event.clientY])
@@ -158,21 +107,8 @@
             .on("mouseleave", (d) => {
                 d3.select("#tooltip").style("display", "none")
             })
-            .on("click", d => {
-                selectedCountry = d.Country
-                drawBarChart(data)
-                drawLineChart(data.find(v => v.Country === d.Country))
-            })
-            .merge(barChartBody)
-            .attr("fill", d => d.Country === selectedCountry ? "red" : "#556677")
+
     }
-
-
-
-
-
-
-
 </script>
 
 </html>
