@@ -1,16 +1,26 @@
 {
   "nodes": [
-    {"id": "John"},
-    {"id": "Marcus"},
-    {"id": "Jane"},
-    {"id": "Clara"},
-    {"id": "Nice"}
+    { "id": "John" },
+    { "id": "Marcus" },
+    { "id": "Jane" },
+    { "id": "Clara" },
+    { "id": "Nice" },
+    { "id": "John1" },
+    { "id": "Marcus1" },
+    { "id": "Jane1" },
+    { "id": "Clara1" },
+    { "id": "Nice1" }
   ],
   "links": [
-    {"source": "John", "target": "Marcus"},
-    {"source": "John", "target": "Jane"},
-    {"source": "John", "target": "Nice"},
-    {"source": "Marcus", "target": "Clara"},
-    {"source": "John", "target": "Clara"}
+    { "source": "John", "target": "Marcus" },
+    { "source": "Marcus", "target": "Jane" },
+    { "source": "Jane", "target": "Clara" },
+    { "source": "Clara", "target": "Nice" },
+    { "source": "Nice", "target": "John1" },
+    { "source": "John1", "target": "Marcus1" },
+    { "source": "Marcus1", "target": "Jane1" },
+    { "source": "Jane1", "target": "Clara1" },
+    { "source": "Clara1", "target": "Nice1" },
+    { "source": "John", "target": "Nice1" }
   ]
 }
